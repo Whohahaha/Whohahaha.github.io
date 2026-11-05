@@ -160,10 +160,10 @@ zh:{
   tCal:['校准','摸边角 → 八指放下 → 拇指 → 打 4 句覆盖全部字母的句子，约 2 分钟'],
   tPractice:['自由练习','随便打，看映射和跟随效果'],tDrill:['找位置练习','摸角落后放手，量手每次落下偏多少毫米'],
   tTest:['测试','抄写短句，记录 WPM 和错误率'],tData:['数据','按条件对比，导出 JSON'],tIntro:['这是什么','看介绍和演示回放'],
-  settings:'设置',sLang:'界面语言',sKb:'打字语言',sCond:'测试条件',sVis:'键盘轮廓',sDec:'练习时解码',sFollow:'跟随修正',sTap:'按键最长',
+  settings:'设置',sLang:'界面语言',sKb:'打字语言',sCond:'测试条件',sVis:'键盘轮廓',sDec:'练习时解码',sFollow:'跟随修正',sTap:'按键最长',sSound:'按键声音',volO:['小','中','大'],soundTest:'试听：普通键 / F J / 空格',
   auto:'自动',on:'开',off:'关',visO:{clear:'清楚',faint:'很淡',hidden:'隐藏'},
   condShort:{'mapped-decode':'映射+解码','mapped-raw':'映射无解码','native':'系统键盘'},
-  tapNote:'按住超过这个时长算“手指休息”，不出字',
+  tapNote:'按住超过这个时长算“手指休息”，不出字',soundNote:'',
   resetLearn:'清掉跟随学到的偏移',resetAll:'删除本方向校准',theme:'切换深浅色',
   gestureTip:'建议先在 iPad 设置 → 多任务与手势 里关掉“手势”（四五指捏合/横扫），否则八指按下会被系统抢走。横屏和竖屏各有一份校准。',
   learnReset:'已恢复到校准时的映射',deleted:'已删除',confirmDelete:'再点一次确认删除',confirmClear:'再点一次确认清空',cleared:'已清空',
@@ -213,7 +213,7 @@ en:{
   tCal:['Calibrate','Corners → eight fingers → thumbs → four sentences covering every letter, about 2 minutes'],
   tPractice:['Free practice','Type anything and watch the map follow you'],tDrill:['Find-the-keys drill','Touch the corners, put your hands down, see how many millimetres off you land'],
   tTest:['Test','Copy short phrases, log WPM and error rate'],tData:['Data','Compare conditions, export JSON'],tIntro:['What is this','Read the intro and watch the replay'],
-  settings:'Settings',sLang:'Interface',sKb:'Typing language',sCond:'Test condition',sVis:'Key outlines',sDec:'Decoder in practice',sFollow:'Follow drift',sTap:'Max tap time',
+  settings:'Settings',sLang:'Interface',sKb:'Typing language',sCond:'Test condition',sVis:'Key outlines',sDec:'Decoder in practice',sFollow:'Follow drift',sTap:'Max tap time',sSound:'Key sounds',volO:['Low','Mid','High'],soundTest:'Preview: key / F J / space',
   auto:'Auto',on:'On',off:'Off',visO:{clear:'Clear',faint:'Faint',hidden:'Hidden'},
   condShort:{'mapped-decode':'Map + decoder','mapped-raw':'Map only','native':'System keyboard'},
   tapNote:'A finger held longer than this is resting and types nothing',
@@ -266,7 +266,7 @@ de:{
   tCal:['Kalibrieren','Ecken → acht Finger → Daumen → vier Sätze mit allen Buchstaben, etwa 2 Minuten'],
   tPractice:['Frei üben','Einfach tippen und zusehen, wie die Belegung folgt'],tDrill:['Positions-Übung','Ecken ertasten, Hände ablegen, Abweichung in Millimetern sehen'],
   tTest:['Test','Kurze Sätze abtippen, WPM und Fehlerrate messen'],tData:['Daten','Bedingungen vergleichen, JSON exportieren'],tIntro:['Worum geht es','Einführung und Wiedergabe ansehen'],
-  settings:'Einstellungen',sLang:'Oberfläche',sKb:'Tippsprache',sCond:'Testbedingung',sVis:'Tastenumrisse',sDec:'Decoder beim Üben',sFollow:'Drift folgen',sTap:'Max. Tippdauer',
+  settings:'Einstellungen',sLang:'Oberfläche',sKb:'Tippsprache',sCond:'Testbedingung',sVis:'Tastenumrisse',sDec:'Decoder beim Üben',sFollow:'Drift folgen',sTap:'Max. Tippdauer',sSound:'Tastenklang',volO:['Leise','Mittel','Laut'],soundTest:'Anhören: Taste / F J / Leertaste',
   auto:'Auto',on:'An',off:'Aus',visO:{clear:'Deutlich',faint:'Blass',hidden:'Aus'},
   condShort:{'mapped-decode':'Belegung + Decoder','mapped-raw':'Nur Belegung','native':'Systemtastatur'},
   tapNote:'Länger gehaltene Finger ruhen und tippen nichts',
@@ -298,7 +298,7 @@ const store={
   get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
   set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 };
-const settings=Object.assign({vis:'faint',decode:true,follow:true,tapMax:300,cond:'mapped-decode',lang:'auto',kb:'auto'},store.get('tkb.settings',{}));
+const settings=Object.assign({vis:'faint',decode:true,follow:true,tapMax:300,cond:'mapped-decode',lang:'auto',kb:'auto',sound:true,vol:2},store.get('tkb.settings',{}));
 const saveSettings=()=>store.set('tkb.settings',settings);
 const browserLang=()=>{const ls=navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'en'];for(const l of ls){const p=String(l).toLowerCase().slice(0,2);if(LANGS.includes(p))return p}return 'en'};
 const uiLang=()=>settings.lang==='auto'?browserLang():settings.lang;
@@ -466,7 +466,7 @@ const caseOf=(w,touches)=>w.split('').map((c,i)=>touches[i]&&touches[i].up?c.toU
 const showRaw=c=>c.up?c.raw.toUpperCase():c.raw;
 function stamp(t){if(T.first===null)T.first=t;T.last=t;T.ks++}
 function typeTap(x,y,t){
-  const r=classify(x,y);stamp(t);T.taps.push({x:Math.round(x),y:Math.round(y),t:Math.round(t),k:r.best});
+  const r=classify(x,y);stamp(t);click(kindOf(r.best));T.taps.push({x:Math.round(x),y:Math.round(y),t:Math.round(t),k:r.best});
   flashes.push({x,y,ch:r.best,t:performance.now()});
   if(r.best==='⇧'){T.shift=!T.shift;render();return}
   const up=T.shift||shiftHeld();T.shift=false;
@@ -481,7 +481,7 @@ function commitWord(space){
 }
 function flushLearning(){const w=T.words[T.words.length-1];if(w&&!w.learnedDone){w.learnedDone=true;learnWord(w)}saveLearned()}
 function backspace(t){
-  stamp(t);T.bks++;
+  stamp(t);click('big');T.bks++;
   if(T.cur.length){T.cur.pop();return}
   if(!T.text.length)return;
   const last=T.words[T.words.length-1];
@@ -545,12 +545,35 @@ function openRecSheet(){const s=S();const all=store.get('tkb.recs',[]);
 function recFile(i){const all=store.get('tkb.recs',[]);return all[i]}
 function downloadText(name,text){try{const blob=new Blob([text],{type:'application/json'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(u);a.remove()},4000)}catch(e){toast(S().copyManual)}}
 
+// ================= 声音反馈（iPad 没有振动马达，用声音代替） =================
+const SND={ctx:null,noise:null};
+function audioUnlock(){if(!settings.sound)return;try{if(!SND.ctx){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;SND.ctx=new AC();
+    const n=SND.ctx.createBuffer(1,SND.ctx.sampleRate*0.08,SND.ctx.sampleRate);const d=n.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;SND.noise=n}
+  if(SND.ctx.state!=='running')SND.ctx.resume();
+  if(!SND.primed){const b=SND.ctx.createBuffer(1,1,22050);const s=SND.ctx.createBufferSource();s.buffer=b;s.connect(SND.ctx.destination);s.start(0);SND.primed=true}}catch(e){}}
+// kind: key 普通键 / home F、J / big 空格、Shift、删除 / ok 对位成功
+const VOICE={
+  key:{bp:3200,q:1.4,len:.018,body:0,  bodyLen:0,  gain:.55},
+  home:{bp:1500,q:1.1,len:.03,body:230,bodyLen:.05,gain:.6},
+  big:{bp:700, q:.9, len:.045,body:120,bodyLen:.08,gain:.7}
+};
+function click(kind){if(!settings.sound||!SND.ctx||SND.ctx.state!=='running')return;
+  try{const c=SND.ctx,t=c.currentTime,vol=[0,.25,.5,1][settings.vol]||.5;
+    if(kind==='ok'){[660,990].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=f;g.gain.setValueAtTime(0,t+i*.07);g.gain.linearRampToValueAtTime(.18*vol,t+i*.07+.005);g.gain.exponentialRampToValueAtTime(.0001,t+i*.07+.12);o.connect(g).connect(c.destination);o.start(t+i*.07);o.stop(t+i*.07+.13)});return}
+    const v=VOICE[kind]||VOICE.key;
+    const src=c.createBufferSource();src.buffer=SND.noise;const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=v.bp*(0.95+Math.random()*.1);f.Q.value=v.q;
+    const g=c.createGain();g.gain.setValueAtTime(v.gain*vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+v.len);src.connect(f).connect(g).connect(c.destination);src.start(t);src.stop(t+v.len+.01);
+    if(v.body){const o=c.createOscillator(),g2=c.createGain();o.type='sine';o.frequency.setValueAtTime(v.body*1.4,t);o.frequency.exponentialRampToValueAtTime(v.body,t+v.bodyLen);
+      g2.gain.setValueAtTime(.5*vol,t);g2.gain.exponentialRampToValueAtTime(.0001,t+v.bodyLen);o.connect(g2).connect(c.destination);o.start(t);o.stop(t+v.bodyLen+.01)}
+  }catch(e){}}
+const kindOf=ch=>ch==='f'||ch==='j'||ch==='F'||ch==='J'?'home':(ch===' '||ch==='⇧')?'big':'key';
+
 // ================= 触摸处理 =================
 const active=new Map();const flashes=[];let chordTimer=null;
 const isUI=e=>e.target&&e.target.closest&&e.target.closest('.ui');
 document.addEventListener('gesturestart',e=>e.preventDefault());
 document.addEventListener('touchstart',e=>{
-  recEvent('s',e.changedTouches);
+  recEvent('s',e.changedTouches);audioUnlock();
   if(isUI(e))return;e.preventDefault();if(!$('#sheet').hidden)return;
   const now=performance.now();
   for(const t of e.changedTouches)active.set(t.identifier,{x0:t.clientX,y0:t.clientY,x:t.clientX,y:t.clientY,t0:now,used:false});
@@ -559,7 +582,7 @@ document.addEventListener('touchstart',e=>{
 },{passive:false,capture:true});
 document.addEventListener('touchmove',e=>{recEvent('m',e.changedTouches);if(!isUI(e))e.preventDefault();for(const t of e.changedTouches){const a=active.get(t.identifier);if(a){a.x=t.clientX;a.y=t.clientY}}},{passive:false,capture:true});
 const endTouch=e=>{
-  recEvent(e.type==='touchend'?'e':'c',e.changedTouches);
+  recEvent(e.type==='touchend'?'e':'c',e.changedTouches);if(e.type==='touchend')audioUnlock();
   if(isUI(e)&&![...e.changedTouches].some(t=>active.has(t.identifier)))return;
   const now=performance.now();
   for(const t of e.changedTouches){const a=active.get(t.identifier);if(!a)continue;active.delete(t.identifier);
@@ -587,12 +610,12 @@ function onChord(points){
     if(cal.step==='home'){if(points.length>8)points=[...points].sort((a,b)=>a[1]-b[1]).slice(0,8);
       cal.home=homeFromPoints(points);const g=geomModel(cal.home,[]);
       if(g.pitch<25||g.pitch>140){toast(s.badHome);cal.home=null;return}
-      cal.geom=g;cal.step='thumb';toast(s.homeSaved);recMark('cal','thumb')}
-    else if(cal.step==='type'&&cal.geom)calReanchor(points);
+      cal.geom=g;cal.step='thumb';toast(s.homeSaved);click('ok');recMark('cal','thumb')}
+    else if(cal.step==='type'&&cal.geom){calReanchor(points);click('ok')}
     render();return}
   if(!model)return;
   if(mode==='drill'){drillRecord(points);return}
-  if(mode==='practice'||mode==='test'){const r=reanchor(points);const txt=Object.entries(r).map(([h,v])=>(h==='L'?s.left:s.right)+' '+fmt(mm(v.shift))+' mm').join(', ');if(txt)toast(s.reanchoredDetail(txt));recMark('keys',recSnapshotKeys())}
+  if(mode==='practice'||mode==='test'){const r=reanchor(points);const txt=Object.entries(r).map(([h,v])=>(h==='L'?s.left:s.right)+' '+fmt(mm(v.shift))+' mm').join(', ');if(txt){toast(s.reanchoredDetail(txt));click('ok')}recMark('keys',recSnapshotKeys())}
 }
 function calReanchor(points){
   cal.off=cal.off||{L:[0,0],R:[0,0]};
@@ -606,7 +629,7 @@ function onTap(x,y,t){
   if(mode==='practice'||(mode==='test'&&settings.cond!=='native'))return typeTap(x,y,t);
 }
 function onSwipe(dir,t){
-  if(mode==='cal'&&cal.step==='type'){if(dir==='left')calUndo();return}
+  if(mode==='cal'&&cal.step==='type'){if(dir==='left'){click('big');calUndo()}return}
   if(mode==='practice'){if(dir==='left')backspace(t);else{commitWord(null);T.text+='\n';flushLearning()}render();return}
   if(mode==='test'&&settings.cond!=='native'){if(dir==='left'){backspace(t);render()}else submitPhrase()}
 }
@@ -617,17 +640,17 @@ function calTap(x,y){
   if(cal.step==='corners'){const nearL=x<W*0.25&&y>H*0.7,nearR=x>W*0.75&&y>H*0.7;
     cal.corners=cal.corners||{};if(nearL)cal.corners.L=[x,y];if(nearR)cal.corners.R=[x,y];
     if(!nearL&&!nearR)toast(s.touchCorners);
-    if(cal.corners.L&&cal.corners.R){cal.step='home';toast(s.goHome);recMark('cal','home')}
+    if(nearL||nearR)click('big');if(cal.corners.L&&cal.corners.R){cal.step='home';toast(s.goHome);recMark('cal','home')}
     render();return}
   if(cal.step==='thumb'){const midY=avg(Object.values(cal.home),1);if(y<midY+0.6*cal.geom.pitch){toast(s.thumbLow);return}
-    cal.thumbs.push([x,y]);flashes.push({x,y,ch:'␣',t:performance.now()});
+    click('big');cal.thumbs.push([x,y]);flashes.push({x,y,ch:'␣',t:performance.now()});
     if(cal.thumbs.length>=6){cal.geom=geomModel(cal.home,cal.thumbs);cal.step='type';cal.si=0;cal.ci=0;recMark('cal','type')}
     render();return}
   if(cal.step==='type'){const L=KB[cal.lang];const sent=CAL_SENT[cal.lang][cal.si];const ch=sent[cal.ci];const id=L.toId[ch]||ch;
     const o=cal.off||{L:[0,0],R:[0,0]};
     const k=cal.geom.keys.find(k=>k.ch===id)||cal.geom.keys.find(k=>k.ch===' ');
     const sx=x-o[k.hand][0],sy=y-o[k.hand][1];
-    cal.samples.push({id,x:sx,y:sy});
+    cal.samples.push({id,x:sx,y:sy});click(kindOf(id==='<'||id==='>'?'⇧':id));
     const near=cal.geom.keys.filter(q=>L.active.has(q.ch)).map(q=>[q,Math.hypot(q.mu[0]-sx,q.mu[1]-sy)]).sort((a,b)=>a[1]-b[1])[0][0];
     cal.marks.push(near.ch===id);flashes.push({x,y,ch:ch===' '?'␣':/[<>]/.test(ch)?'⇧':ch,t:performance.now()});
     cal.ci++;if(cal.ci>=sent.length){cal.si++;cal.ci=0;cal.marks=[];if(cal.si>=CAL_SENT[cal.lang].length)finishCal()}
@@ -676,7 +699,7 @@ function drillRecord(points){
   const cen=hand=>{const ks=hand==='L'?HOME_L:HOME_R;return [avg(ks.map(c=>h[c]),0)-avg(ks.map(c=>profile.home[c]),0),avg(ks.map(c=>h[c]),1)-avg(ks.map(c=>profile.home[c]),1)]};
   const r={ts:Date.now(),mean:mm(sum/8),L:cen('L').map(mm),R:cen('R').map(mm)};
   drill.results.unshift(r);const all=store.get('tkb.drills',[]);all.push(r);store.set('tkb.drills',all);
-  reanchor(points);toast(S().drillToast(fmt(r.mean)));recMark('drill',+fmt(r.mean));render();
+  reanchor(points);click('ok');toast(S().drillToast(fmt(r.mean)));recMark('drill',+fmt(r.mean));render();
 }
 
 // ================= 绘制 =================
@@ -764,6 +787,7 @@ function openMenu(){const s=S();
     <div class="row"><span class="lbl">${s.sVis}</span>${seg('vis',Object.entries(s.visO))}</div>
     <div class="row"><span class="lbl">${s.sDec}</span>${seg('decode',[['true',s.on],['false',s.off]])}</div>
     <div class="row"><span class="lbl">${s.sFollow}</span>${seg('follow',[['true',s.on],['false',s.off]])}</div>
+    <div class="row"><span class="lbl">${s.sSound}</span>${seg('sound',[['true',s.on],['false',s.off]])}${settings.sound?seg('vol',[[1,s.volO[0]],[2,s.volO[1]],[3,s.volO[2]]]):''}<button data-act="soundTest">${s.soundTest}</button></div>
     <div class="row"><span class="lbl">${s.sTap}</span>${seg('tapMax',[[200,'200ms'],[300,'300ms'],[450,'450ms']])}<span class="note">${s.tapNote}</span></div>
     <div class="row"><button data-act="resetLearn">${s.resetLearn}</button><button data-act="resetAll">${s.resetAll}</button><button data-act="theme">${s.theme}</button>${REC.enabled?`<button data-act="recSheet">${s.recTitle}</button>`:''}</div>
   </div></div>
@@ -788,6 +812,7 @@ const ACTS={
   resetAll(b){const s=S();if(b.dataset.armed){try{localStorage.removeItem('tkb.profile.'+orientKey())}catch(e){}profile=null;model=null;toast(s.deleted);setMode('home')}else{b.dataset.armed=1;b.textContent=s.confirmDelete}},
   theme(){const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.dataset.theme=dark?'light':'dark';store.set('tkb.theme',r.dataset.theme);render()},
   recSheet(){openRecSheet()},
+  soundTest(){audioUnlock();['key','home','big'].forEach((k,i)=>setTimeout(()=>click(k),60+i*350))},
   recToggle(){if(REC.on)recStop();else{recStart();closeSheet()}},
   recDl(b){const r=recFile(+b.dataset.i);if(r)downloadText(`blindtype-touch-${r.startedAt.replace(/[:.]/g,'-')}.json`,JSON.stringify(r))},
   recCopy(b){const r=recFile(+b.dataset.i);if(!r)return;const t=$('#recDump');t.hidden=false;t.value=JSON.stringify(r);copyFrom(t)}
