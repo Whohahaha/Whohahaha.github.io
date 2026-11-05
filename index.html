@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Haoran Xu</title>
+<meta name="description" content="Haoran Xu — Medical Engineering, FAU Erlangen-Nürnberg. Projects and prototypes.">
+<meta property="og:title" content="Haoran Xu">
+<meta property="og:description" content="Projects and prototypes · 项目与原型 · Projekte und Prototypen">
+<meta property="og:url" content="https://whohahaha.live/">
+<meta name="theme-color" content="#f4f6f8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1418" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b7d84'/%3E%3Ctext x='16' y='22' font-family='Helvetica,Arial,sans-serif' font-size='15' font-weight='700' fill='white' text-anchor='middle'%3EHX%3C/text%3E%3C/svg%3E">
+<style>
+/* Same tokens as /touch-keyboard/ so the site reads as one place. */
+:root{
+  --bg:#f4f6f8; --surface:#ffffff; --fg:#16202a; --muted:#5b6876; --line:#d7dde4;
+  --accent:#0b7d84; --accent-ink:#ffffff; --accent-soft:rgba(11,125,132,.10);
+  --f-ui:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Noto Sans SC",system-ui,sans-serif;
+  --f-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1418; --surface:#141b20; --fg:#e4eaef; --muted:#93a1ad; --line:#2a353e;
+  --accent:#34b3b9; --accent-ink:#06191a; --accent-soft:rgba(52,179,185,.12); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1418; --surface:#141b20; --fg:#e4eaef; --muted:#93a1ad; --line:#2a353e;
+  --accent:#34b3b9; --accent-ink:#06191a; --accent-soft:rgba(52,179,185,.12); color-scheme:dark}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-ui);line-height:1.6;
+  -webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:760px;margin:0 auto;padding:0 max(20px,env(safe-area-inset-left)) 0 max(20px,env(safe-area-inset-right))}
+
+/* top bar */
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 0}
+.mark{font-family:var(--f-mono);font-size:13px;letter-spacing:.04em;color:var(--muted);text-decoration:none}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--surface)}
+.lang button{all:unset;cursor:pointer;font-size:13px;padding:4px 11px;border-radius:999px;color:var(--muted);min-width:22px;text-align:center}
+.lang button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.lang button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+
+/* intro */
+.intro{padding:56px 0 48px}
+.intro h1{font-size:clamp(36px,7vw,52px);line-height:1.1;letter-spacing:-.02em;margin:0 0 16px;font-weight:700}
+.intro p{font-size:18px;color:var(--muted);margin:0;max-width:34em;text-wrap:pretty}
+.links{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:24px;font-size:15px}
+.links a{text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:1px}
+.links a:hover{border-color:var(--accent);color:var(--accent)}
+
+/* projects */
+section.projects h2{font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+  margin:0 0 16px;padding-top:24px;border-top:1px solid var(--line)}
+.card{display:grid;grid-template-columns:1fr;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;
+  transition:border-color .15s, transform .15s}
+.card:hover{border-color:var(--accent)}
+.art{background:var(--accent-soft);aspect-ratio:16/7;display:block;width:100%}
+.art svg{display:block;width:100%;height:100%}
+.body{padding:22px 24px 24px}
+.body h3{font-size:22px;margin:0 0 6px;letter-spacing:-.01em}
+.meta{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin:0 0 12px}
+.body p.desc{margin:0 0 16px;text-wrap:pretty}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 20px;padding:0;list-style:none}
+.tags li{font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-size:15px;font-weight:600;
+  padding:10px 18px;border-radius:10px;border:1px solid var(--line)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn:not(.primary):hover{border-color:var(--accent);color:var(--accent)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (min-width:680px){
+  .card{grid-template-columns:260px 1fr}
+  .art{aspect-ratio:auto;height:100%}
+}
+
+footer{padding:56px 0 calc(32px + env(safe-area-inset-bottom));font-size:13px;color:var(--muted)}
+footer a{text-decoration:none;border-bottom:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="mark" href="/">whohahaha.live</a>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-set-lang="zh" lang="zh-CN">中</button>
+      <button type="button" data-set-lang="en" lang="en">EN</button>
+      <button type="button" data-set-lang="de" lang="de">DE</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h1>Haoran Xu</h1>
+      <p data-i18n="intro"></p>
+      <nav class="links">
+        <a href="#projects" data-i18n="toProjects"></a>
+        <a href="https://github.com/Whohahaha" rel="me">GitHub ↗</a>
+      </nav>
+    </section>
+
+    <section class="projects" id="projects">
+      <h2 data-i18n="projects"></h2>
+
+      <article class="card">
+        <a class="art" href="/touch-keyboard/" tabindex="-1" aria-hidden="true">
+          <!-- Per-key Gaussians (ellipses) with a few touch points: the idea behind the keyboard. -->
+          <svg viewBox="0 0 260 200" preserveAspectRatio="xMidYMid slice" id="kbArt"></svg>
+        </a>
+        <div class="body">
+          <h3 data-i18n="kb.title"></h3>
+          <p class="meta" data-i18n="kb.meta"></p>
+          <p class="desc" data-i18n="kb.desc"></p>
+          <ul class="tags">
+            <li data-i18n="kb.t1"></li><li data-i18n="kb.t2"></li><li data-i18n="kb.t3"></li>
+          </ul>
+          <div class="actions">
+            <a class="btn primary" href="/touch-keyboard/"><span data-i18n="open"></span> →</a>
+            <a class="btn" href="https://github.com/Whohahaha/Whohahaha.github.io/tree/main/touch-keyboard" data-i18n="readme"></a>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer>© 2026 Haoran Xu · <a href="https://github.com/Whohahaha">github.com/Whohahaha</a></footer>
+</div>
+
+<script>
+const T = {
+  zh: {
+    _lang: "zh-CN",
+    intro: "医学工程硕士在读，FAU 埃尔朗根-纽伦堡大学。这里放我做的小工具和实验原型。",
+    toProjects: "看项目 ↓",
+    projects: "项目",
+    "kb.title": "盲打触控键盘",
+    "kb.meta": "iPad 网页原型 · Safari · 建议横屏",
+    "kb.desc": "屏幕是平的，但边缘摸得到。用边缘做触觉锚点，按你自己手指的落点建立键盘映射，打字时再跟随手的漂移。",
+    "kb.t1": "原型", "kb.t2": "每键高斯模型", "kb.t3": "词级解码",
+    open: "打开", readme: "说明与算法"
+  },
+  en: {
+    _lang: "en",
+    intro: "M.Sc. student in Medical Engineering at FAU Erlangen-Nürnberg. This is where I keep the small tools and experimental prototypes I build.",
+    toProjects: "See projects ↓",
+    projects: "Projects",
+    "kb.title": "Blind-typing touch keyboard",
+    "kb.meta": "iPad web prototype · Safari · landscape",
+    "kb.desc": "A screen is flat, but its edges can be felt. The edges serve as tactile anchors, the key map is built from where your own fingers land, and it follows your hands as they drift while you type.",
+    "kb.t1": "Prototype", "kb.t2": "Per-key Gaussians", "kb.t3": "Word-level decoding",
+    open: "Open", readme: "How it works"
+  },
+  de: {
+    _lang: "de",
+    intro: "Masterstudent der Medizintechnik an der FAU Erlangen-Nürnberg. Hier sammle ich kleine Werkzeuge und Prototypen, die ich baue.",
+    toProjects: "Zu den Projekten ↓",
+    projects: "Projekte",
+    "kb.title": "Blindschreib-Touch-Tastatur",
+    "kb.meta": "iPad-Web-Prototyp · Safari · Querformat",
+    "kb.desc": "Ein Bildschirm ist flach, aber seine Kanten sind fühlbar. Sie dienen als tastbare Anker, die Tastenbelegung entsteht aus deinen eigenen Fingerpositionen und folgt der Hand, wenn sie beim Tippen wandert.",
+    "kb.t1": "Prototyp", "kb.t2": "Gauß-Modell pro Taste", "kb.t3": "Wortbasierte Dekodierung",
+    open: "Öffnen", readme: "Funktionsweise"
+  }
+};
+
+function pickInitial(){
+  try{ const s = localStorage.getItem("lang"); if (T[s]) return s; }catch(e){}
+  const q = new URLSearchParams(location.search).get("lang"); if (T[q]) return q;
+  for (const l of (navigator.languages || [navigator.language || ""])){
+    const k = l.slice(0,2).toLowerCase(); if (T[k]) return k;
+  }
+  return "en";
+}
+function setLang(k, save){
+  const d = T[k];
+  document.documentElement.lang = d._lang;
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = d[el.dataset.i18n]; });
+  document.querySelectorAll("[data-set-lang]").forEach(b => b.setAttribute("aria-pressed", b.dataset.setLang === k));
+  if (save){ try{ localStorage.setItem("lang", k); }catch(e){} }
+}
+document.querySelectorAll("[data-set-lang]").forEach(b => b.addEventListener("click", () => setLang(b.dataset.setLang, true)));
+setLang(pickInitial(), false);
+
+/* Card art: QWERTY rows of slightly skewed key ellipses + touch points */
+(function(){
+  const svg = document.getElementById("kbArt"), NS = "http://www.w3.org/2000/svg";
+  const rows = [10, 9, 7], kw = 24, kh = 30;
+  let seed = 7; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  const g = document.createElementNS(NS, "g");
+  g.setAttribute("transform", "translate(10 48) rotate(-4 130 50)");
+  rows.forEach((n, r) => {
+    const x0 = r * 9 + (10 - n) * kw / 2 * (r === 2 ? 0.6 : 0);
+    for (let i = 0; i < n; i++){
+      const cx = x0 + i * kw + 12 + (rnd() - .5) * 4, cy = r * kh + 15 + (rnd() - .5) * 4;
+      const e = document.createElementNS(NS, "ellipse");
+      e.setAttribute("cx", cx); e.setAttribute("cy", cy);
+      e.setAttribute("rx", 8 + rnd() * 3); e.setAttribute("ry", 11 + rnd() * 3);
+      e.setAttribute("transform", `rotate(${(rnd() - .5) * 30} ${cx} ${cy})`);
+      e.setAttribute("fill", "var(--accent)"); e.setAttribute("fill-opacity", ".14");
+      e.setAttribute("stroke", "var(--accent)"); e.setAttribute("stroke-opacity", ".45");
+      g.appendChild(e);
+      if (rnd() < .45){
+        const d = document.createElementNS(NS, "circle");
+        d.setAttribute("cx", cx + (rnd() - .5) * 8); d.setAttribute("cy", cy + (rnd() - .5) * 10);
+        d.setAttribute("r", 2.2); d.setAttribute("fill", "var(--accent)");
+        g.appendChild(d);
+      }
+    }
+  });
+  const sp = document.createElementNS(NS, "rect");
+  sp.setAttribute("x", 70); sp.setAttribute("y", 3 * kh + 4); sp.setAttribute("width", 110); sp.setAttribute("height", 18);
+  sp.setAttribute("rx", 9); sp.setAttribute("fill", "var(--accent)"); sp.setAttribute("fill-opacity", ".14");
+  sp.setAttribute("stroke", "var(--accent)"); sp.setAttribute("stroke-opacity", ".45");
+  g.appendChild(sp);
+  svg.appendChild(g);
+})();
+</script>
+</body>
+</html>
