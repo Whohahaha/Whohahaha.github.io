@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>StudOn Sync · Nathan</title>
+<meta name="description" content="StudOn Sync: an unofficial desktop app that keeps your FAU StudOn course files in sync with a folder on your own computer.">
+<meta property="og:title" content="StudOn Sync">
+<meta property="og:description" content="Sync your FAU StudOn course files to your own computer · 把 StudOn 课程文件同步到自己电脑 · StudOn-Kursdateien auf den eigenen Rechner synchronisieren">
+<meta property="og:url" content="https://whohahaha.live/studon-sync/">
+<meta name="theme-color" content="#f4f6f8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1418" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b7d84'/%3E%3Ctext x='16' y='22' font-family='Helvetica,Arial,sans-serif' font-size='15' font-weight='700' fill='white' text-anchor='middle'%3EHX%3C/text%3E%3C/svg%3E">
+<style>
+/* Same tokens as the homepage and /touch-keyboard/. */
+:root{
+  --bg:#f4f6f8; --surface:#ffffff; --fg:#16202a; --muted:#5b6876; --line:#d7dde4;
+  --accent:#0b7d84; --accent-ink:#ffffff; --accent-soft:rgba(11,125,132,.10); --warn:#b25d00;
+  --f-ui:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Noto Sans SC",system-ui,sans-serif;
+  --f-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1418; --surface:#141b20; --fg:#e4eaef; --muted:#93a1ad; --line:#2a353e;
+  --accent:#34b3b9; --accent-ink:#06191a; --accent-soft:rgba(52,179,185,.12); --warn:#e3a14a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1418; --surface:#141b20; --fg:#e4eaef; --muted:#93a1ad; --line:#2a353e;
+  --accent:#34b3b9; --accent-ink:#06191a; --accent-soft:rgba(52,179,185,.12); --warn:#e3a14a; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-ui);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:760px;margin:0 auto;padding:0 max(20px,env(safe-area-inset-left)) 0 max(20px,env(safe-area-inset-right))}
+
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 0}
+.mark{font-family:var(--f-mono);font-size:13px;letter-spacing:.04em;color:var(--muted);text-decoration:none}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--surface)}
+.lang button{all:unset;cursor:pointer;font-size:13px;padding:4px 11px;border-radius:999px;color:var(--muted);min-width:22px;text-align:center}
+.lang button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.lang button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+
+.intro{padding:48px 0 36px}
+.intro h1{font-size:clamp(34px,6.5vw,48px);line-height:1.1;letter-spacing:-.02em;margin:0 0 14px;font-weight:700}
+.intro p{font-size:18px;color:var(--muted);margin:0;max-width:34em;text-wrap:pretty}
+.note{display:inline-block;margin:0 0 18px;font-size:12px;font-family:var(--f-mono);color:var(--warn);
+  border:1px solid currentColor;border-radius:999px;padding:2px 10px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.btn{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-size:15px;font-weight:600;
+  padding:10px 18px;border-radius:10px;border:1px solid var(--line)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn:not(.primary):hover{border-color:var(--accent);color:var(--accent)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.small{font-size:13px;color:var(--muted);margin:10px 0 0}
+
+section{padding:24px 0 8px;border-top:1px solid var(--line);margin-top:24px}
+section h2{font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 16px}
+ul.feat{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+@media (min-width:640px){ul.feat{grid-template-columns:1fr 1fr}}
+ul.feat li{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+ul.feat b{display:block;margin-bottom:2px}
+ul.feat span{color:var(--muted);font-size:15px}
+ol.steps{margin:0;padding-left:1.3em}
+ol.steps li{margin:0 0 10px;text-wrap:pretty}
+pre{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow:auto;
+  font-family:var(--f-mono);font-size:13px;line-height:1.5;margin:8px 0 0}
+ul.rules{margin:0;padding-left:1.2em}
+ul.rules li{margin:0 0 8px;text-wrap:pretty}
+
+footer{padding:56px 0 calc(32px + env(safe-area-inset-bottom));font-size:13px;color:var(--muted)}
+footer a{text-decoration:none;border-bottom:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="mark" href="/">whohahaha.live</a>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-set-lang="zh" lang="zh-CN">中</button>
+      <button type="button" data-set-lang="en" lang="en">EN</button>
+      <button type="button" data-set-lang="de" lang="de">DE</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="intro">
+      <p class="note" data-i18n="unofficial"></p>
+      <h1>StudOn Sync</h1>
+      <p data-i18n="lead"></p>
+      <div class="actions">
+        <a class="btn primary" href="https://github.com/Whohahaha/studon-sync/releases/latest/download/StudOn-Sync-macOS.zip"><span data-i18n="dl"></span> ↓</a>
+        <a class="btn" href="https://github.com/Whohahaha/studon-sync"><span data-i18n="src"></span> ↗</a>
+      </div>
+      <p class="small" data-i18n="dlNote"></p>
+    </div>
+
+    <section>
+      <h2 data-i18n="hFeat"></h2>
+      <ul class="feat">
+        <li><b data-i18n="f1t"></b><span data-i18n="f1"></span></li>
+        <li><b data-i18n="f2t"></b><span data-i18n="f2"></span></li>
+        <li><b data-i18n="f3t"></b><span data-i18n="f3"></span></li>
+        <li><b data-i18n="f4t"></b><span data-i18n="f4"></span></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 data-i18n="hStart"></h2>
+      <ol class="steps">
+        <li data-i18n="s1"></li>
+        <li data-i18n="s2"></li>
+        <li data-i18n="s3"></li>
+        <li data-i18n="s4"></li>
+      </ol>
+      <p class="small" data-i18n="srcNote"></p>
+<pre>git clone https://github.com/Whohahaha/studon-sync.git
+cd studon-sync
+python3 -m venv .venv
+.venv/bin/pip install -e .
+.venv/bin/studon-sync</pre>
+    </section>
+
+    <section>
+      <h2 data-i18n="hRules"></h2>
+      <ul class="rules">
+        <li data-i18n="r1"></li>
+        <li data-i18n="r2"></li>
+        <li data-i18n="r3"></li>
+        <li data-i18n="r4"></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>© 2026 Nathan · <a href="https://github.com/Whohahaha/studon-sync">MIT License</a> · <a href="/">whohahaha.live</a></footer>
+</div>
+
+<script>
+const T = {
+  zh: {
+    _lang: "zh-CN",
+    unofficial: "非官方工具 · 与 FAU / StudOn 无关",
+    lead: "把 FAU StudOn 课程里的文件自动下载到你自己电脑上的文件夹，保持原有目录结构，每天自动更新。文件夹也可以放在 Google Drive、OneDrive 或 Dropbox 里。",
+    dl: "下载 macOS 版", src: "源码 · GitHub",
+    dlNote: "v0.3.0 · macOS，Apple 芯片 · 约 15 MB。App 未经 Apple 公证：第一次打开时到“系统设置 → 隐私与安全性”点“仍要打开”。Windows / Linux 请从源码安装。",
+    hFeat: "功能",
+    f1t: "FAU 登录，自动验证码", f1: "用 IdM 账号通过 FAU SSO + TOTP 登录。账号和密钥只存在本机钥匙串里，不会上传。",
+    f2t: "增量同步", f2: "只下载新文件和更新过的文件，从不删除本地文件。可以选每天定时或每隔几小时，在后台运行。",
+    f3t: "保护你的笔记", f3: "你在 PDF 上做过笔记的文件永远不会被覆盖，新版本另存在旁边，并提醒你。",
+    f4t: "自己挑文件", f4: "按 StudOn 的目录勾选要下载的文件。界面有中文、English、Deutsch。",
+    hStart: "开始使用",
+    s1: "下载并解压，把 StudOn Sync.app 拖进“应用程序”。",
+    s2: "“账号”页：填 IdM 用户名、密码和 TOTP secret（在 IdM 门户添加 Authenticator App 时二维码旁边的字符串），点“测试登录”。",
+    s3: "“课程”页：粘贴 StudOn 课程链接，选择下载到哪个文件夹。",
+    s4: "“同步”页：点“立即同步”，或者设置自动同步。",
+    srcNote: "从源码运行（macOS / Windows / Linux，需要 Python 3.11+）：",
+    hRules: "使用规则",
+    r1: "只用你自己的账号，在你自己的电脑上运行。FAU 的 IT 使用规定禁止把账号交给别人，也禁止存在别人能用的设备上。",
+    r2: "不要传播课程材料。课程文件受版权保护，只供本课程的老师和学生使用，不要公开共享下载文件夹。",
+    r3: "对服务器友好：默认一次只下载一个文件、请求间隔 1 秒。每天同步几次就够了。",
+    r4: "本工具按 MIT 许可证“按原样”提供，不提供担保，风险自负。不确定时请先咨询 RRZE。"
+  },
+  en: {
+    _lang: "en",
+    unofficial: "Unofficial · not affiliated with FAU / StudOn",
+    lead: "Automatically downloads the files of your FAU StudOn courses into a folder on your own computer, keeps the folder structure, and updates every day. The folder can live in Google Drive, OneDrive or Dropbox.",
+    dl: "Download for macOS", src: "Source · GitHub",
+    dlNote: "v0.3.0 · macOS, Apple Silicon · about 15 MB. The app is not notarized by Apple: on first launch go to System Settings → Privacy & Security → “Open Anyway”. On Windows / Linux, install from source.",
+    hFeat: "Features",
+    f1t: "FAU login, codes generated for you", f1: "Signs in with your IdM account via FAU SSO + TOTP. Credentials stay in your local keychain and are never uploaded.",
+    f2t: "Incremental sync", f2: "Only new and changed files are downloaded, and local files are never deleted. Runs in the background daily or every few hours.",
+    f3t: "Protects your notes", f3: "A PDF you have annotated is never overwritten: the new version is saved next to it and you get a notice.",
+    f4t: "Pick your files", f4: "Choose files and folders in StudOn's structure. Interface in English, Deutsch and 中文.",
+    hStart: "Getting started",
+    s1: "Download, unzip and move StudOn Sync.app to Applications.",
+    s2: "Account: enter your IdM username, password and TOTP secret (the string next to the QR code when you add an authenticator app in the IdM portal), then Test login.",
+    s3: "Courses: paste a StudOn course link and choose the target folder.",
+    s4: "Sync: click Sync now, or set up automatic syncing.",
+    srcNote: "Run from source (macOS / Windows / Linux, Python 3.11+):",
+    hRules: "Rules of use",
+    r1: "Use only your own account, on your own computer. FAU's IT usage rules forbid giving your credentials to others or storing them on devices other people use.",
+    r2: "Do not redistribute course material. Course files are copyrighted and meant only for the course's teachers and students; do not share your download folder publicly.",
+    r3: "Be gentle with the server: by default one file at a time with a 1-second delay between requests. A few syncs per day are plenty.",
+    r4: "Provided “as is” under the MIT license, without warranty; use at your own risk. If in doubt, ask RRZE first."
+  },
+  de: {
+    _lang: "de",
+    unofficial: "Inoffiziell · keine Verbindung zur FAU / StudOn",
+    lead: "Lädt die Dateien deiner FAU-StudOn-Kurse automatisch in einen Ordner auf deinem eigenen Rechner, behält die Ordnerstruktur bei und aktualisiert täglich. Der Ordner kann in Google Drive, OneDrive oder Dropbox liegen.",
+    dl: "Für macOS herunterladen", src: "Quellcode · GitHub",
+    dlNote: "v0.3.0 · macOS, Apple Silicon · ca. 15 MB. Die App ist nicht von Apple notarisiert: Beim ersten Start unter Systemeinstellungen → Datenschutz & Sicherheit auf „Trotzdem öffnen“ klicken. Unter Windows / Linux aus dem Quellcode installieren.",
+    hFeat: "Funktionen",
+    f1t: "FAU-Login, Codes automatisch", f1: "Anmeldung mit deiner IdM-Kennung über FAU SSO + TOTP. Zugangsdaten bleiben im lokalen Schlüsselbund und werden nie hochgeladen.",
+    f2t: "Inkrementeller Sync", f2: "Nur neue und geänderte Dateien werden geladen, lokale Dateien werden nie gelöscht. Läuft im Hintergrund täglich oder alle paar Stunden.",
+    f3t: "Schützt deine Notizen", f3: "Ein PDF mit deinen Anmerkungen wird nie überschrieben: Die neue Version landet daneben und du bekommst einen Hinweis.",
+    f4t: "Dateien selbst wählen", f4: "Dateien und Ordner in der StudOn-Struktur auswählen. Oberfläche auf Deutsch, English und 中文.",
+    hStart: "Erste Schritte",
+    s1: "Herunterladen, entpacken und StudOn Sync.app in den Ordner Programme ziehen.",
+    s2: "Konto: IdM-Kennung, Passwort und TOTP-Secret eintragen (die Zeichenfolge neben dem QR-Code, wenn du im IdM-Portal eine Authenticator-App hinzufügst), dann Anmeldung testen.",
+    s3: "Kurse: StudOn-Kurslink einfügen und den Zielordner wählen.",
+    s4: "Sync: Jetzt synchronisieren klicken oder automatischen Sync einrichten.",
+    srcNote: "Aus dem Quellcode starten (macOS / Windows / Linux, Python 3.11+):",
+    hRules: "Nutzungsregeln",
+    r1: "Nur mit deiner eigenen Kennung und auf deinem eigenen Rechner verwenden. Die IT-Benutzungsrichtlinien der FAU verbieten, Zugangsdaten weiterzugeben oder auf Geräten zu speichern, die andere nutzen.",
+    r2: "Kursmaterial nicht weitergeben. Kursdateien sind urheberrechtlich geschützt und nur für Lehrende und Studierende des Kurses gedacht; den Download-Ordner nicht öffentlich teilen.",
+    r3: "Den Server schonen: standardmäßig eine Datei nach der anderen mit 1 Sekunde Pause zwischen Anfragen. Ein paar Syncs pro Tag reichen.",
+    r4: "Bereitgestellt „wie besehen“ unter der MIT-Lizenz, ohne Gewähr; Nutzung auf eigenes Risiko. Im Zweifel vorher beim RRZE nachfragen."
+  }
+};
+function pickInitial(){
+  try{ const s = localStorage.getItem("lang"); if (T[s]) return s; }catch(e){}
+  const q = new URLSearchParams(location.search).get("lang"); if (T[q]) return q;
+  for (const l of (navigator.languages || [navigator.language || ""])){
+    const k = l.slice(0,2).toLowerCase(); if (T[k]) return k;
+  }
+  return "en";
+}
+function setLang(k, save){
+  const d = T[k];
+  document.documentElement.lang = d._lang;
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = d[el.dataset.i18n]; });
+  document.querySelectorAll("[data-set-lang]").forEach(b => b.setAttribute("aria-pressed", b.dataset.setLang === k));
+  if (save){ try{ localStorage.setItem("lang", k); }catch(e){} }
+}
+document.querySelectorAll("[data-set-lang]").forEach(b => b.addEventListener("click", () => setLang(b.dataset.setLang, true)));
+setLang(pickInitial(), false);
+</script>
+</body>
+</html>

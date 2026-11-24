@@ -122,6 +122,40 @@ footer a{text-decoration:none;border-bottom:1px solid var(--line)}
           </div>
         </div>
       </article>
+
+      <article class="card">
+        <a class="art" href="/studon-sync/" tabindex="-1" aria-hidden="true">
+          <!-- A course folder tree on the left syncing into a local folder on the right. -->
+          <svg viewBox="0 0 260 200" preserveAspectRatio="xMidYMid slice">
+            <g fill="var(--accent)" fill-opacity=".14" stroke="var(--accent)" stroke-opacity=".45">
+              <rect x="34" y="50" width="62" height="16" rx="4"/>
+              <rect x="50" y="76" width="54" height="12" rx="3"/>
+              <rect x="50" y="96" width="54" height="12" rx="3"/>
+              <rect x="34" y="118" width="62" height="16" rx="4"/>
+              <rect x="50" y="144" width="54" height="12" rx="3"/>
+              <path d="M160 72h22l8 8h36v66h-66z"/>
+            </g>
+            <g fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M116 92h28m-7-7 7 7-7 7"/>
+              <path d="M116 128h28m-7-7 7 7-7 7"/>
+            </g>
+            <g fill="var(--accent)"><circle cx="178" cy="104" r="2.6"/><circle cx="192" cy="104" r="2.6"/><circle cx="206" cy="104" r="2.6"/>
+              <circle cx="178" cy="120" r="2.6"/><circle cx="192" cy="120" r="2.6"/></g>
+          </svg>
+        </a>
+        <div class="body">
+          <h3 data-i18n="ss.title"></h3>
+          <p class="meta" data-i18n="ss.meta"></p>
+          <p class="desc" data-i18n="ss.desc"></p>
+          <ul class="tags">
+            <li data-i18n="ss.t1"></li><li data-i18n="ss.t2"></li><li data-i18n="ss.t3"></li>
+          </ul>
+          <div class="actions">
+            <a class="btn primary" href="/studon-sync/"><span data-i18n="more"></span> →</a>
+            <a class="btn" href="https://github.com/Whohahaha/studon-sync">GitHub ↗</a>
+          </div>
+        </div>
+      </article>
     </section>
   </main>
 
@@ -139,6 +173,11 @@ const T = {
     "kb.meta": "iPad 网页原型 · Safari · 建议横屏",
     "kb.desc": "屏幕是平的，但边缘摸得到。用边缘做触觉锚点，按你自己手指的落点建立键盘映射，打字时再跟随手的漂移。",
     "kb.t1": "原型", "kb.t2": "每键高斯模型", "kb.t3": "词级解码",
+    "ss.title": "StudOn Sync",
+    "ss.meta": "桌面 App · macOS（Windows / Linux 源码）· 非官方",
+    "ss.desc": "把 FAU StudOn 课程文件自动同步到自己电脑上的文件夹。FAU 登录和验证码自动完成，只下载新文件，你做过笔记的 PDF 不会被覆盖。",
+    "ss.t1": "开源 · MIT", "ss.t2": "FAU SSO + TOTP", "ss.t3": "增量同步",
+    more: "介绍与下载",
     open: "打开", readme: "说明与算法"
   },
   en: {
@@ -150,6 +189,11 @@ const T = {
     "kb.meta": "iPad web prototype · Safari · landscape",
     "kb.desc": "A screen is flat, but its edges can be felt. The edges serve as tactile anchors, the key map is built from where your own fingers land, and it follows your hands as they drift while you type.",
     "kb.t1": "Prototype", "kb.t2": "Per-key Gaussians", "kb.t3": "Word-level decoding",
+    "ss.title": "StudOn Sync",
+    "ss.meta": "Desktop app · macOS (Windows / Linux from source) · unofficial",
+    "ss.desc": "Keeps your FAU StudOn course files in sync with a folder on your own computer. FAU login and codes are handled for you, only new files are downloaded, and PDFs you have annotated are never overwritten.",
+    "ss.t1": "Open source · MIT", "ss.t2": "FAU SSO + TOTP", "ss.t3": "Incremental sync",
+    more: "Details & download",
     open: "Open", readme: "How it works"
   },
   de: {
@@ -161,6 +205,11 @@ const T = {
     "kb.meta": "iPad-Web-Prototyp · Safari · Querformat",
     "kb.desc": "Ein Bildschirm ist flach, aber seine Kanten sind fühlbar. Sie dienen als tastbare Anker, die Tastenbelegung entsteht aus deinen eigenen Fingerpositionen und folgt der Hand, wenn sie beim Tippen wandert.",
     "kb.t1": "Prototyp", "kb.t2": "Gauß-Modell pro Taste", "kb.t3": "Wortbasierte Dekodierung",
+    "ss.title": "StudOn Sync",
+    "ss.meta": "Desktop-App · macOS (Windows / Linux aus dem Quellcode) · inoffiziell",
+    "ss.desc": "Hält die Dateien deiner FAU-StudOn-Kurse in einem Ordner auf deinem Rechner aktuell. FAU-Login und Codes laufen automatisch, nur neue Dateien werden geladen, und kommentierte PDFs werden nie überschrieben.",
+    "ss.t1": "Open Source · MIT", "ss.t2": "FAU SSO + TOTP", "ss.t3": "Inkrementeller Sync",
+    more: "Details & Download",
     open: "Öffnen", readme: "Funktionsweise"
   }
 };
